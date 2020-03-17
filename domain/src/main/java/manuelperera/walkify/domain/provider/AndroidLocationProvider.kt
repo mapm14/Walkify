@@ -1,4 +1,4 @@
-package manuelperera.walkify.domain.repository
+package manuelperera.walkify.domain.provider
 
 import io.reactivex.Completable
 import io.reactivex.Observable

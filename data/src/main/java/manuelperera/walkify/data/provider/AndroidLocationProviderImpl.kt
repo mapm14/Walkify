@@ -13,7 +13,7 @@ import io.reactivex.Observable
 import manuelperera.walkify.data.R
 import manuelperera.walkify.domain.entity.base.Failure
 import manuelperera.walkify.domain.entity.location.GpsLocation
-import manuelperera.walkify.domain.repository.AndroidLocationProvider
+import manuelperera.walkify.domain.provider.AndroidLocationProvider
 import timber.log.Timber
 import javax.inject.Inject
 
