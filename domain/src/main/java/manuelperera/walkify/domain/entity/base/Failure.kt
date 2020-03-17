@@ -22,4 +22,6 @@ sealed class Failure(var retryAction: () -> Unit = {}) : Throwable() {
 
     object NoResolvableGooglePlayServicesError : Failure()
 
+    object PermissionsNotGranted: Failure()
+
 }

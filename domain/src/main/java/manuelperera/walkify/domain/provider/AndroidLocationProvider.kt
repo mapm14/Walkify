@@ -6,8 +6,8 @@ import manuelperera.walkify.domain.entity.location.GpsLocation
 
 interface AndroidLocationProvider {
 
-    fun locationUpdatesPeriodically(timeInterval: Long): Observable<GpsLocation>
+    fun locationUpdatesPeriodically(smallestDisplacementInMeters: Float): Observable<GpsLocation>
 
-    fun stopLocationUpdatesPeriodically(): Completable
+    fun stopLocationUpdatesPeriodically()
 
 }

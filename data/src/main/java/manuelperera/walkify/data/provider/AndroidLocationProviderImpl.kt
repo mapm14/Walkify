@@ -1,14 +1,16 @@
 package manuelperera.walkify.data.provider
 
-import android.annotation.SuppressLint
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.os.Build
 import android.os.Looper
 import com.chuckerteam.chucker.BuildConfig
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
-import io.reactivex.Completable
 import io.reactivex.Observable
 import manuelperera.walkify.data.R
 import manuelperera.walkify.domain.entity.base.Failure
@@ -17,26 +19,30 @@ import manuelperera.walkify.domain.provider.AndroidLocationProvider
 import timber.log.Timber
 import javax.inject.Inject
 
+private const val REFRESH_INTERVAL_IN_MILLIS = 60000L
+
 class AndroidLocationProviderImpl @Inject constructor(
     private val fusedLocationProvider: FusedLocationProviderClient,
-    private val resources: Resources
+    private val resources: Resources,
+    private val context: Context
 ) : AndroidLocationProvider {
 
     private lateinit var locationCallbackPeriodically: LocationCallback
 
-    @SuppressLint("MissingPermission")
-    override fun locationUpdatesPeriodically(timeInterval: Long): Observable<GpsLocation> {
-        val locationRequestPeriodically: LocationRequest = LocationRequest.create().apply {
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval = timeInterval
-            fastestInterval = timeInterval
-            smallestDisplacement = 100f // TODO: Check this variable
-        }
+    override fun locationUpdatesPeriodically(smallestDisplacementInMeters: Float): Observable<GpsLocation> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return Observable.error(Failure.PermissionsNotGranted)
+        } else {
+            val locationRequestPeriodically: LocationRequest = LocationRequest.create().apply {
+                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+                interval = REFRESH_INTERVAL_IN_MILLIS
+                fastestInterval = REFRESH_INTERVAL_IN_MILLIS / 2
+                smallestDisplacement = smallestDisplacementInMeters
+            }
 
-        return Observable.create<GpsLocation> { emitter ->
-                locationCallbackPeriodically = object : LocationCallback() {
-                    override fun onLocationResult(locationResult: LocationResult?) {
-                        if (emitter.isDisposed.not()) {
+            return Observable.create<GpsLocation> { emitter ->
+                    locationCallbackPeriodically = object : LocationCallback() {
+                        override fun onLocationResult(locationResult: LocationResult?) {
                             locationResult?.locations?.forEach { location ->
                                 Timber.w("Location mocked result: ${location.isFromMockProvider}")
 
@@ -55,23 +61,23 @@ class AndroidLocationProviderImpl @Inject constructor(
                             }
                         }
                     }
-                }
 
-                Looper.prepare()
-                fusedLocationProvider.requestLocationUpdates(
-                    locationRequestPeriodically,
-                    locationCallbackPeriodically,
-                    Looper.myLooper()
-                )
-                Looper.loop()
-            }
-            .doAfterTerminate { stopLocationUpdatesPeriodically() }
-            .doOnDispose { stopLocationUpdatesPeriodically() }
+                    Looper.prepare()
+                    fusedLocationProvider.requestLocationUpdates(
+                        locationRequestPeriodically,
+                        locationCallbackPeriodically,
+                        Looper.myLooper()
+                    )
+                    Looper.loop()
+                }
+                .doAfterTerminate { stopLocationUpdatesPeriodically() }
+        }
     }
 
-    override fun stopLocationUpdatesPeriodically(): Completable = Completable.fromAction {
-        if (::locationCallbackPeriodically.isInitialized)
+    override fun stopLocationUpdatesPeriodically() {
+        if (::locationCallbackPeriodically.isInitialized) {
             fusedLocationProvider.removeLocationUpdates(locationCallbackPeriodically)
+        }
     }
 
 }

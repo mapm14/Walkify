@@ -2,16 +2,13 @@ package manuelperera.walkify.presentation.ui.base.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import dagger.Lazy
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.disposables.CompositeDisposable
-import manuelperera.walkify.presentation.R
 import manuelperera.walkify.presentation.extensions.Constants
-import manuelperera.walkify.presentation.extensions.snackbar
 import manuelperera.walkify.presentation.permissions.PermissionManager
 import manuelperera.walkify.presentation.permissions.addObserver
 import javax.inject.Inject
@@ -58,7 +55,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     protected fun requestAndRun(
         permissions: List<String>,
         action: () -> Unit,
-        failAction: (List<String>, Boolean) -> Unit,
+        failAction: (List<String>, Boolean) -> Unit = { _, _ -> },
         isMandatory: Boolean = false
     ) {
         lifecycle.addObserver(permissionManager.get(), this)

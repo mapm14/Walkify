@@ -14,7 +14,7 @@ class BaseRetrofit @Inject constructor(
 ) {
 
     val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("baseUrl") // TODO: Add Base URL
+        .baseUrl("https://google.com") // TODO: Add Base URL
         .addConverterFactory(GsonConverterFactory.create(gson))
         .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
         .client(okHttpClient)
