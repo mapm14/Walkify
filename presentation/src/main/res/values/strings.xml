@@ -1,0 +1,11 @@
+<resources>
+
+    <!--Permissions-->
+    <string name="hard_deny_permission">Permissions required</string>
+    <string name="hard_deny_permission_message">Permissions are required for continue</string>
+    <string name="hard_deny_permission_not_mandatory">Permissions were denied</string>
+    <string name="hard_deny_permission_not_mandatory_message">If you want to grant permissions please go to settings of the App</string>
+    <string name="hard_deny_permission_go_to_settings">GO TO SETTINGS</string>
+    <string name="permission_denied">Permission denied</string>
+
+</resources>
