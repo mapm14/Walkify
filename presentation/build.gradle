@@ -1,36 +1,73 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion rootProject.ext.androidCompileSdkVersion
     buildToolsVersion "29.0.1"
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
+        testInstrumentationRunner rootProject.ext.testInstrumentationRunner
+    }
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles 'consumer-rules.pro'
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
+        debug
+        release
     }
+}
 
+configurations {
+    instrumentationTestImplementation.extendsFrom androidTestImplementation
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    //reactive
+    implementation "com.jakewharton.rxbinding3:rxbinding:$rxBindingVersion"
+    //chucker
+    debugImplementation "com.github.ChuckerTeam.Chucker:library:$chuckerVersion"
+    releaseImplementation "com.github.ChuckerTeam.Chucker:library-no-op:$chuckerVersion"
+    //ui
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
+    implementation "com.github.bumptech.glide:glide:$glideVersion"
+    kapt "com.github.bumptech.glide:compiler:$glideVersion"
+    implementation "com.facebook.shimmer:shimmer:$shimmerVersion"
+    //android architecture component
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-reactivestreams:$lifecycleVersion"
+    //dependency injection
+    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+
+    //dependency injection
+    api "com.google.dagger:dagger-android:$daggerVersion"
+    api "com.google.dagger:dagger-android-support:$daggerVersion"
+    //reactive
+    api "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
+    //other
+    api "com.google.android.material:material:$materialVersion"
+    api "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
+    //test
+    androidTestImplementation "androidx.test:runner:$supportTestVersion"
+    androidTestImplementation "androidx.test:rules:$supportTestVersion"
+    androidTestImplementation "androidx.test:core:$testCoreVersion"
+    androidTestImplementation "androidx.test.ext:junit:$testExtJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
+    // endregion
+
+    implementation project(':domain')
+    testImplementation project(path: ':domain', configuration: 'unitTestImplementation')
 }
