@@ -15,6 +15,7 @@ private const val TIMEOUT = 30L
 
 class BaseHttpClient @Inject constructor(
     chuckerCollector: ChuckerCollector,
+    tokenInterceptor: TokenInterceptor,
     context: Context
 ) {
 
@@ -26,6 +27,7 @@ class BaseHttpClient @Inject constructor(
     @Suppress("ConstantConditionIf")
     val okHttpClient: OkHttpClient = OkHttpClient()
         .newBuilder()
+        .addInterceptor(tokenInterceptor)
         .addInterceptor(
             HttpLoggingInterceptor().apply {
                 level = if (BuildConfig.DEBUG) BODY else NONE
