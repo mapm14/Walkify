@@ -4,10 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.LayoutRes
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.snackbar.Snackbar
 import dagger.Lazy
 import dagger.android.support.DaggerAppCompatActivity
-import io.reactivex.disposables.CompositeDisposable
 import manuelperera.walkify.presentation.extensions.Constants
 import manuelperera.walkify.presentation.permissions.PermissionManager
 import manuelperera.walkify.presentation.permissions.addObserver
@@ -24,29 +22,9 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     @setparam:LayoutRes
     abstract var activityLayout: Int
 
-    protected val compositeDisposable: CompositeDisposable by lazy {
-        CompositeDisposable()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(activityLayout)
-    }
-
-    override fun onDestroy() {
-        compositeDisposable.dispose()
-        super.onDestroy()
-    }
-
-    fun showSnackbar(
-        title: String,
-        action: String,
-        length: Int = Snackbar.LENGTH_INDEFINITE,
-        actionResult: () -> Unit = {}
-    ) {
-        // TODO: Check extension
-//        val container = findViewById<View?>(R.id.parentContainer)
-//        container?.snackbar(title, action, length, actionResult = actionResult)
     }
 
     //region Permissions
