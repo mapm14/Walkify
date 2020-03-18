@@ -22,13 +22,11 @@ ext {
     rxKotlinVersion = '2.3.0'
     rxAndroidVersion = '2.1.1'
     rxJavaVersion = '2.2.10'
-    rxBindingVersion = '3.0.0-alpha2'
+    rxBindingVersion = '3.1.0'
     //network
-    retrofit2Version = '2.5.0'
-    okhttpLoggingVersion = '3.12.0'
+    retrofit2Version = '2.7.2'
+    okhttpLoggingVersion = '4.4.0'
     chuckerVersion = '3.1.2'
-    //parser
-    gsonVersion = '2.4.0'
     //android
     lifecycleVersion = '2.2.0'
     constraintLayoutVersion = '2.0.0-beta4'
@@ -38,7 +36,7 @@ ext {
     //play-services
     servicesLocationVersion = '17.0.0'
     //dependency injection
-    daggerVersion = '2.26'
+    daggerVersion = '2.27'
     //other
     timberVersion = '4.7.1'
     //UI

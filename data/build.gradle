@@ -3,6 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+def apikeyPropertiesFile = rootProject.file("apikey.properties")
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
 android {
     compileSdkVersion rootProject.ext.androidCompileSdkVersion
     buildToolsVersion "29.0.1"
@@ -13,13 +17,15 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner rootProject.ext.testInstrumentationRunner
+
+        buildConfigField "String", "BASE_URL", "\"https://flickr.com/services/\""
+        buildConfigField "String", "CONSUMER_KEY", "\"" + apikeyProperties['CONSUMER_KEY'] + "\""
     }
 
     buildTypes {
         debug
         release
     }
-
 }
 
 dependencies {
@@ -35,7 +41,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
     //parser
-    api "com.squareup.retrofit2:converter-gson:$gsonVersion"
+    api "com.squareup.retrofit2:converter-gson:$retrofit2Version"
     //network
     api "com.squareup.retrofit2:retrofit:$retrofit2Version"
     api "com.squareup.retrofit2:adapter-rxjava2:$retrofit2Version"
