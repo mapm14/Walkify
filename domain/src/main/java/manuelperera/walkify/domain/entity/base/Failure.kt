@@ -1,8 +1,16 @@
 package manuelperera.walkify.domain.entity.base
 
+import android.content.res.Resources
+import manuelperera.walkify.domain.R
+
 private const val UNKNOWN_ERROR_CODE = -1
 
 sealed class Failure(var retryAction: () -> Unit = {}) : Throwable() {
+
+    fun getMessage(resources: Resources): String = when (this) {
+        is FailureWithMessage -> this.msg
+        else -> resources.getString(R.string.unknown_error)
+    }
 
     abstract class FailureWithMessage(open val msg: String) : Failure()
 
@@ -22,6 +30,6 @@ sealed class Failure(var retryAction: () -> Unit = {}) : Throwable() {
 
     object NoResolvableGooglePlayServicesError : Failure()
 
-    object PermissionsNotGranted: Failure()
+    object PermissionsNotGranted : Failure()
 
 }

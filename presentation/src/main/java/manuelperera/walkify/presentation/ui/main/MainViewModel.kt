@@ -4,30 +4,39 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
-import manuelperera.walkify.domain.usecase.photo.GetPhotoByLocationParams
-import manuelperera.walkify.domain.usecase.photo.GetPhotoByLocationUseCase
+import manuelperera.walkify.domain.entity.photo.PhotoSizeInfo
+import manuelperera.walkify.domain.usecase.photo.GetPhotoUrlsUpdatesByLocationUseCase
+import manuelperera.walkify.domain.usecase.photo.GetPhotosUrlsUpdatesByLocationParams
 import manuelperera.walkify.presentation.ui.base.viewmodel.BaseViewModel
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    private val getPhotoByLocationUseCase: GetPhotoByLocationUseCase
+    private val getPhotoUrlsUpdatesByLocationUseCase: GetPhotoUrlsUpdatesByLocationUseCase
 ) : BaseViewModel() {
 
-    private val _ldUrl: MutableLiveData<String> = MutableLiveData()
-    val ldUrl: LiveData<String> = _ldUrl
+    private val _ldUrlList: MutableLiveData<MutableList<String>> = MutableLiveData()
+    val ldUrlList: LiveData<MutableList<String>> = _ldUrlList
 
-    fun getPhotoByLocation(smallestDisplacementInMeters: Float) {
-        getPhotoByLocationUseCase(GetPhotoByLocationParams(smallestDisplacementInMeters))
+    fun getPhotoByLocation(smallestDisplacementInMeters: Float, selectedLabel: PhotoSizeInfo.Label) {
+        val params = GetPhotosUrlsUpdatesByLocationParams(smallestDisplacementInMeters, selectedLabel)
+
+        getPhotoUrlsUpdatesByLocationUseCase(params)
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-
+            .doOnSubscribe { loading() }
+            .subscribe(this::addUrlToList)
+            { throwable ->
+                handleFailure(throwable) { getPhotoByLocation(smallestDisplacementInMeters, selectedLabel) }
             }
-            .subscribe({ url ->
-                _ldUrl.value = url
-            }, { throwable ->
-                recordError(throwable)
-            })
             .addTo(compositeDisposable)
+    }
+
+    private fun addUrlToList(photoUrl: String) {
+        _ldUrlList.value?.let { mutable ->
+            mutable.add(0, photoUrl)
+            _ldUrlList.value = mutable
+        } ?: kotlin.run {
+            _ldUrlList.value = mutableListOf(photoUrl)
+        }
     }
 
 }
