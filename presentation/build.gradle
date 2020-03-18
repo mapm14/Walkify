@@ -26,6 +26,10 @@ android {
         debug
         release
     }
+    
+    viewBinding {
+        enabled = true
+    }
 }
 
 configurations {
