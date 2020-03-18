@@ -23,7 +23,7 @@ inline fun <reified T : BaseViewModel> Fragment.viewModel(
     return vm
 }
 
-inline fun <reified T : BaseViewModel> Fragment.viewModelFromActivity(
+inline fun <reified T : BaseViewModel> Fragment.sharedViewModel(
     factory: ViewModelProvider.Factory,
     body: T.() -> Unit
 ): T? {

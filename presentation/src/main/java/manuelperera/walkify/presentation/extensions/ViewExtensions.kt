@@ -1,25 +1,64 @@
 package manuelperera.walkify.presentation.extensions
 
+import android.graphics.drawable.Drawable
+import android.view.LayoutInflater
 import android.view.View
-import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
-import com.google.android.material.snackbar.Snackbar
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.annotation.DrawableRes
+import androidx.annotation.LayoutRes
+import androidx.appcompat.content.res.AppCompatResources
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import manuelperera.walkify.presentation.R
+import manuelperera.walkify.presentation.ui.base.GlideApp
 
-fun View.snackbar(
-    title: String = "",
-    action: String = "",
-    length: Int = Snackbar.LENGTH_LONG,
-    @ColorRes actionColor: Int = R.color.colorPrimary,
-    actionResult: () -> Unit = {}
-): Snackbar {
-    val snackbar = Snackbar.make(this, title, length)
+fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View =
+    LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
 
-    if (action.isNotEmpty()) {
-        snackbar.setAction(action) { actionResult() }
-        snackbar.setActionTextColor(ContextCompat.getColor(context, actionColor))
+fun ImageView.load(
+    url: String?,
+    @DrawableRes placeholderRes: Int = R.drawable.ic_retry, // TODO: Change placeholder
+    onSuccess: () -> Unit = {},
+    onError: () -> Unit = {}
+) {
+    val safePlaceholderDrawable = AppCompatResources.getDrawable(context, placeholderRes)
+    val requestOptions = RequestOptions().apply {
+        placeholder(safePlaceholderDrawable)
+        error(safePlaceholderDrawable)
     }
-    snackbar.show()
 
-    return snackbar
+    val requestListener = object : RequestListener<Drawable> {
+        override fun onLoadFailed(
+            e: GlideException?,
+            model: Any?,
+            target: Target<Drawable>?,
+            isFirstResource: Boolean
+        ): Boolean {
+            onError()
+            return false
+        }
+
+        override fun onResourceReady(
+            resource: Drawable?,
+            model: Any?,
+            target: Target<Drawable>?,
+            dataSource: DataSource?,
+            isFirstResource: Boolean
+        ): Boolean {
+            onSuccess()
+            return false
+        }
+    }
+
+    val glideRequest = GlideApp
+        .with(context)
+        .setDefaultRequestOptions(requestOptions)
+        .load(url)
+        .listener(requestListener)
+
+    glideRequest.into(this)
 }
