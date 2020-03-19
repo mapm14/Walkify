@@ -1,53 +1,70 @@
 package manuelperera.walkify.presentation.broadcastreceiver
 
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.BitmapFactory
 import android.location.LocationManager
-import manuelperera.walkify.presentation.extensions.safeLet
+import android.provider.Settings
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import manuelperera.walkify.presentation.R
+import manuelperera.walkify.presentation.extensions.isGpsOn
+import manuelperera.walkify.presentation.pushnotification.WalkifyNotificationManager
 import timber.log.Timber
+import javax.inject.Inject
 
-class GpsLocationSettingReceiver : BroadcastReceiver() {
+private const val NOTIFICATION_ID = 141192
 
-    private var isRegistered: Boolean = false
+class GpsLocationSettingReceiver @Inject constructor(
+    private val notificationManager: NotificationManagerCompat
+) : BroadcastReceiver() {
 
     fun register(context: Context) {
-        if (!isRegistered) {
-            try {
-                context.unregisterReceiver(this)
-                context.registerReceiver(this, IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION))
-                isRegistered = true
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
+        try {
+            context.registerReceiver(this, IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION))
+        } catch (e: Exception) {
+            Timber.e(e, "Register error")
         }
     }
 
     fun unregister(context: Context) {
-        if (isRegistered) {
-            try {
-                context.unregisterReceiver(this)
-                isRegistered = false
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
+        try {
+            context.unregisterReceiver(this)
+        } catch (e: Exception) {
+            Timber.e(e, "Unregister error")
         }
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        safeLet(context, intent) { safeContext, _ ->
-            if (isGpsOn(safeContext).not()) {
-                // TODO: Launch Activity to request permissions again
-//                safeContext.startActivity(GpsRequestActivity.getIntent(context))
+        context?.let { safeContext ->
+            if (safeContext.isGpsOn()) {
+                notificationManager.cancel(NOTIFICATION_ID)
+            } else {
+                createNotificationForEnableGPS(context)
             }
         }
     }
 
-    private fun isGpsOn(context: Context): Boolean {
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    private fun createNotificationForEnableGPS(context: Context) {
+        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        val gpsSettingsPendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val incomingRequestNotification =
+            NotificationCompat.Builder(context, WalkifyNotificationManager.getGpsChannelId())
+                .setSmallIcon(R.drawable.ic_retry)
+                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_retry))
+                .setContentTitle(context.getString(R.string.enable_gps))
+                .setContentText(context.getString(R.string.please_enable_gps_to_resume_walk_track))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                .setContentIntent(gpsSettingsPendingIntent)
+                .build()
+
+        notificationManager.notify(NOTIFICATION_ID, incomingRequestNotification)
     }
 
 }

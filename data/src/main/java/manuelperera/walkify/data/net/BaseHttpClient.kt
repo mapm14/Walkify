@@ -14,26 +14,26 @@ import javax.inject.Inject
 private const val TIMEOUT = 30L
 
 class BaseHttpClient @Inject constructor(
-    chuckerCollector: ChuckerCollector,
-    tokenInterceptor: TokenInterceptor,
-    context: Context
+    private val chuckerCollector: ChuckerCollector,
+    private val context: Context,
+    tokenInterceptor: TokenInterceptor
 ) {
 
-    private val chuckerInterceptor = ChuckerInterceptor(
+    private fun getChuckerInterceptor() = ChuckerInterceptor(
         context = context,
         collector = chuckerCollector
     )
 
     @Suppress("ConstantConditionIf")
+    private fun getHttpLoggingInterceptor() = HttpLoggingInterceptor().apply {
+        level = if (BuildConfig.DEBUG) BODY else NONE
+    }
+
     val okHttpClient: OkHttpClient = OkHttpClient()
         .newBuilder()
         .addInterceptor(tokenInterceptor)
-        .addInterceptor(
-            HttpLoggingInterceptor().apply {
-                level = if (BuildConfig.DEBUG) BODY else NONE
-            }
-        )
-        .addInterceptor(chuckerInterceptor)
+        .addInterceptor(getHttpLoggingInterceptor())
+        .addInterceptor(getChuckerInterceptor())
         .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
         .readTimeout(TIMEOUT, TimeUnit.SECONDS)
         .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
