@@ -16,7 +16,6 @@ abstract class ProviderModule {
     abstract fun location(locationProviderImpl: AndroidLocationProviderImpl): AndroidLocationProvider
 
     @Binds
-    @Singleton
     abstract fun googlePlay(googlePlayServicesHandlerImpl: GooglePlayServicesHandlerImpl): GooglePlayServicesHandler
 
 }
