@@ -10,4 +10,11 @@
     <string name="no_results_yet">No results yet :(</string>
     <string name="retry">Retry</string>
 
+    <!--GPS-->
+    <string name="enable_gps">Enable GPS!</string>
+    <string name="please_enable_gps_to_resume_walk_track">Please enable GPS to resume walk track</string>
+    <string name="gps_needed">GPS needed</string>
+    <string name="enable_gps_services_to_record_walk">Enable GPS services to record walk</string>
+    <string name="activate">Activate</string>
+
 </resources>
