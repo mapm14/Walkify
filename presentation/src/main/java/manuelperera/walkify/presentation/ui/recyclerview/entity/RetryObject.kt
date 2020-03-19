@@ -1,12 +1,14 @@
 package manuelperera.walkify.presentation.ui.recyclerview.entity
 
-class RetryObject(
+private const val RETRY_OBJECT_ID = "RETRY_OBJECT_ID"
+
+data class RetryObject(
     val text: String,
     val onRetryClick: () -> Unit,
-    viewType: RecyclerViewObject.ItemViewType
+    val viewType: RecyclerViewObject.ItemViewType
 ) : RecyclerViewObject {
 
-    override var id: String = this::class.java.simpleName
+    override var id: String = RETRY_OBJECT_ID
     override var itemViewType = viewType
 
 }
