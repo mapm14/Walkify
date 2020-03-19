@@ -6,10 +6,7 @@ import dagger.android.AndroidInjectionModule
 import dagger.android.AndroidInjector
 import manuelperera.walkify.app.application.WalkifyApplication
 import manuelperera.walkify.app.di.module.data.DataModule
-import manuelperera.walkify.app.di.module.presentation.ActivityModule
-import manuelperera.walkify.app.di.module.presentation.AppModule
-import manuelperera.walkify.app.di.module.presentation.FragmentModule
-import manuelperera.walkify.app.di.module.presentation.ViewModelModule
+import manuelperera.walkify.app.di.module.presentation.*
 import javax.inject.Singleton
 
 @Singleton
@@ -17,6 +14,7 @@ import javax.inject.Singleton
     modules = [
         AndroidInjectionModule::class,
         AppModule::class,
+        PushNotificationModule::class,
         ViewModelModule::class,
         ActivityModule::class,
         FragmentModule::class,
