@@ -14,12 +14,12 @@ import javax.inject.Inject
  */
 class GetLocationRefreshesUseCase @Inject constructor(
     private val checkGooglePlayServices: CheckGooglePlayServicesUseCase,
-    private val locationProvider: AndroidLocationProvider
+    private val androidLocationProvider: AndroidLocationProvider
 ) : ObservableUseCase<GpsLocation, GetLocationRefreshesParams> {
 
     override fun invoke(params: GetLocationRefreshesParams): Observable<GpsLocation> =
         checkGooglePlayServices(Unit)
-            .andThen(locationProvider.locationUpdatesPeriodically(params.smallestDisplacementInMeters))
+            .andThen(androidLocationProvider.locationUpdatesPeriodically(params.smallestDisplacementInMeters))
             .subscribeOn(Schedulers.newThread())
 
 }
