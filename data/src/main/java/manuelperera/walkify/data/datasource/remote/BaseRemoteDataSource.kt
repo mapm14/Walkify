@@ -9,8 +9,8 @@ import io.reactivex.Single
 import manuelperera.walkify.data.BuildConfig
 import manuelperera.walkify.data.R
 import manuelperera.walkify.data.entity.base.ApiCodes
+import manuelperera.walkify.data.entity.base.DataObject
 import manuelperera.walkify.data.entity.base.ErrorResponse
-import manuelperera.walkify.data.entity.base.ResponseObject
 import manuelperera.walkify.domain.entity.base.Failure
 import manuelperera.walkify.domain.entity.base.Success
 import okhttp3.ResponseBody
@@ -50,13 +50,13 @@ open class BaseRemoteDataSource {
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
-    fun <RO : ResponseObject<DO>, DO : Any> modifySingle(
-        single: Single<Result<RO>>,
+    fun <Data : DataObject<Domain>, Domain : Any> modifySingle(
+        single: Single<Result<Data>>,
         timeoutTime: Long = timeout,
         retryTimes: Int = retry
-    ): Single<DO> {
+    ): Single<Domain> {
         return applyOperations(single, timeoutTime, retryTimes) { response ->
-            val body: RO? = response.body()
+            val body: Data? = response.body()
             if (body != null) {
                 getDomainObject(body)
             } else {
@@ -66,7 +66,7 @@ open class BaseRemoteDataSource {
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
-    fun <RO : ResponseObject<DO>, DO : Any> modifySingleList(
+    fun <RO : DataObject<DO>, DO : Any> modifySingleList(
         single: Single<Result<List<RO>>>,
         timeoutTime: Long = timeout,
         retryTimes: Int = retry
@@ -112,12 +112,12 @@ open class BaseRemoteDataSource {
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <RO : ResponseObject<DO>, DO : Any> getDomainObject(body: RO): DO =
-        (body as ResponseObject<Any>).toDomain() as DO
+    private fun <RO : DataObject<DO>, DO : Any> getDomainObject(body: RO): DO =
+        (body as DataObject<Any>).toDomain() as DO
 
     @Suppress("UNCHECKED_CAST")
-    private fun <RO : ResponseObject<DO>, DO : Any> getDomainObjectList(body: List<RO>): List<DO> =
-        (body as List<ResponseObject<Any>>).map { it.toDomain() } as List<DO>
+    private fun <RO : DataObject<DO>, DO : Any> getDomainObjectList(body: List<RO>): List<DO> =
+        (body as List<DataObject<Any>>).map { it.toDomain() } as List<DO>
 
     @Suppress("UNCHECKED_CAST")
     private fun <DO : Any> getDomainObjectNoResponse(code: Int): DO =
@@ -149,7 +149,7 @@ open class BaseRemoteDataSource {
         }
     }
 
-    protected fun getFailureUnknownError(): Failure.Error =
+    private fun getFailureUnknownError(): Failure.Error =
         Failure.Error(resources.get().getString(R.string.unknown_error))
 
     private fun getFailureTimeout(): Failure.Timeout =

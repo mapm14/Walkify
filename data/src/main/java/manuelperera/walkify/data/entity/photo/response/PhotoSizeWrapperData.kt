@@ -1,13 +1,13 @@
 package manuelperera.walkify.data.entity.photo.response
 
 import com.google.gson.annotations.SerializedName
-import manuelperera.walkify.data.entity.base.ResponseObject
+import manuelperera.walkify.data.entity.base.DataObject
 import manuelperera.walkify.data.extensions.toEnum
 import manuelperera.walkify.domain.entity.photo.Photo
 
-class PhotoSizeWrapperResponse(
+class PhotoSizeWrapperData(
     @SerializedName("sizes") val photoSizeResponse: PhotoSizeResponse
-) : ResponseObject<List<Photo.SizeInfo>> {
+) : DataObject<List<Photo.SizeInfo>> {
 
     inner class PhotoSizeResponse(
         @SerializedName("size") val photoSizeInfoResponseList: List<PhotoSizeInfoResponse>

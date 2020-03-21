@@ -6,7 +6,7 @@ import androidx.room.TypeConverters
 import manuelperera.walkify.data.datasource.local.PHOTO_ENTITY_TABLE_NAME
 import manuelperera.walkify.data.datasource.local.converters.PhotoEntityDbDataConverter
 import manuelperera.walkify.data.datasource.local.converters.TimestampConverter
-import manuelperera.walkify.data.entity.base.ResponseObject
+import manuelperera.walkify.data.entity.base.DataObject
 import manuelperera.walkify.data.extensions.toEnum
 import manuelperera.walkify.domain.entity.photo.Photo
 import java.util.*
@@ -16,7 +16,7 @@ class PhotoEntityDb(
     @PrimaryKey val id: String,
     @TypeConverters(PhotoEntityDbDataConverter::class) val sizeInfoList: List<SizeInfo>,
     @TypeConverters(TimestampConverter::class) val addedDate: Date
-) : ResponseObject<Photo> {
+) : DataObject<Photo> {
 
     constructor(photo: Photo) : this(
         id = photo.id,
