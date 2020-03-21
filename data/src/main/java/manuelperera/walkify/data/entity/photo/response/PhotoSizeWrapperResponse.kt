@@ -7,7 +7,7 @@ import manuelperera.walkify.domain.entity.photo.Photo
 
 class PhotoSizeWrapperResponse(
     @SerializedName("sizes") val photoSizeResponse: PhotoSizeResponse
-) : ResponseObject<List<Photo.PhotoSizeInfo>> {
+) : ResponseObject<List<Photo.SizeInfo>> {
 
     inner class PhotoSizeResponse(
         @SerializedName("size") val photoSizeInfoResponseList: List<PhotoSizeInfoResponse>
@@ -20,11 +20,11 @@ class PhotoSizeWrapperResponse(
 
     }
 
-    override fun toDomain(): List<Photo.PhotoSizeInfo> =
+    override fun toDomain(): List<Photo.SizeInfo> =
         photoSizeResponse.photoSizeInfoResponseList.mapNotNull { photoSizeInfoResponse ->
             try {
-                val label = photoSizeInfoResponse.label.toEnum<Photo.PhotoSizeInfo.Label>()
-                Photo.PhotoSizeInfo(label, photoSizeInfoResponse.url)
+                val label = photoSizeInfoResponse.label.toEnum<Photo.SizeInfo.Label>()
+                Photo.SizeInfo(label, photoSizeInfoResponse.url)
             } catch (e: Exception) {
                 null
             }

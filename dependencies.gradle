@@ -31,6 +31,8 @@ ext {
     lifecycleVersion = '2.2.0'
     constraintLayoutVersion = '2.0.0-beta4'
     materialVersion = '1.2.0-alpha05'
+    //room
+    roomVersion = '2.2.5'
     //image processor
     glideVersion = '4.11.0'
     //play-services
@@ -41,7 +43,6 @@ ext {
     timberVersion = '4.7.1'
     //UI
     shimmerVersion = '0.5.0'
-    swiperefreshlayoutVersion = '1.1.0-alpha03'
     //test
     mockitoKotlinVersion = '2.2.0'
     mockitoCoreVersion = '3.3.0'

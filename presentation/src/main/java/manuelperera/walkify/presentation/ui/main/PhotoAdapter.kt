@@ -8,7 +8,7 @@ import manuelperera.walkify.presentation.extensions.load
 import manuelperera.walkify.presentation.ui.recyclerview.adapter.NotPagingAdapter
 import manuelperera.walkify.presentation.ui.recyclerview.entity.RecyclerViewObject
 
-private val SELECTED_LABEL = Photo.PhotoSizeInfo.Label.MEDIUM
+private val SELECTED_LABEL = Photo.SizeInfo.Label.MEDIUM
 
 class PhotoAdapter : NotPagingAdapter<PhotoAdapter.PhotoUI>() {
 
