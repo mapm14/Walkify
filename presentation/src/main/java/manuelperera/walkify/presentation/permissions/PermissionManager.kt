@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.math.abs
 
-// TODO: Check permission for Android 10
 class PermissionManager @Inject constructor() : FragmentLifecycleObserver,
     ActivityLifecycleObserver {
 
@@ -89,11 +88,13 @@ class PermissionManager @Inject constructor() : FragmentLifecycleObserver,
         AlertDialog.Builder(context)
             .setTitle(context.getString(R.string.hard_deny_permission))
             .setMessage(context.getString(R.string.hard_deny_permission_message))
-            .setPositiveButton(context.getString(android.R.string.ok)) { _, _ ->
+            .setPositiveButton(context.getString(R.string.hard_deny_permission_go_to_settings)) { _, _ ->
                 val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                 val uri = Uri.fromParts("package", context.packageName, null)
                 intent.data = uri
                 startActivity(intent, Constants.SETTINGS_REQUEST_CODE)
+            }
+            .setNegativeButton(context.getString(android.R.string.cancel)) { _, _ ->
             }
             .create()
             .show()

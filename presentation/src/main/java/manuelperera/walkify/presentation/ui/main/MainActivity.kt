@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import manuelperera.walkify.presentation.R
 import manuelperera.walkify.presentation.databinding.ActivityMainBinding
@@ -49,22 +50,13 @@ class MainActivity : BaseActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val item: MenuItem = menu.findItem(R.id.walk)
-        if (isLocationServiceRunning()) {
-            item.title = getString(R.string.stop_walk)
-        } else {
-            item.title = getString(R.string.start_walk)
-        }
+        item.title = if (isLocationServiceRunning()) getString(R.string.stop_walk) else getString(R.string.start_walk)
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (item.itemId == R.id.walk) {
-            if (isLocationServiceRunning()) {
-                stopWalk()
-            } else {
-                startWalk()
-            }
-            invalidateOptionsMenu()
+            if (isLocationServiceRunning()) stopWalk() else startWalk()
             true
         } else {
             super.onOptionsItemSelected(item)
@@ -95,6 +87,7 @@ class MainActivity : BaseActivity() {
     private fun stopWalk() {
         applicationContext.stopService(Intent(this, LocationService::class.java))
         mainViewModel.clearDatabase()
+        invalidateOptionsMenu()
     }
 
     private fun setupViewModel() {
@@ -116,6 +109,10 @@ class MainActivity : BaseActivity() {
         checkOrRequestAndRun(
             permissions = listOf(ACCESS_FINE_LOCATION),
             action = this::startLocationService,
+            failAction = { _, _ ->
+                // Check denied permissions and if they are mandatory
+                Toast.makeText(this, getString(R.string.please_enable_permissions), Toast.LENGTH_LONG).show()
+            },
             isMandatory = true
         )
     }
@@ -128,6 +125,7 @@ class MainActivity : BaseActivity() {
             } else {
                 applicationContext.startService(intent)
             }
+            invalidateOptionsMenu()
         }
 
         mainViewModel.getPhotoUpdates()

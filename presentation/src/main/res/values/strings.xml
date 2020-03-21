@@ -6,7 +6,7 @@
     <string name="hard_deny_permission_not_mandatory">Mandatory permissions were denied</string>
     <string name="hard_deny_permission_not_mandatory_message">If you want to grant permissions please go to settings of the App</string>
     <string name="hard_deny_permission_go_to_settings">GO TO SETTINGS</string>
-    <string name="permission_denied">Permission denied</string>
+    <string name="please_enable_permissions">Please enable permissions to continue</string>
     <string name="no_results_yet">No results yet :(</string>
     <string name="retry">Retry</string>
 
