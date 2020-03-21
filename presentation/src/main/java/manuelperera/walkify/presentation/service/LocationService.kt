@@ -36,9 +36,6 @@ class LocationService : DaggerService() {
     lateinit var getPhotoUpdatesByLocationUseCase: GetPhotoUpdatesByLocationUseCase
 
     @Inject
-    lateinit var notificationManagerCompat: NotificationManagerCompat
-
-    @Inject
     lateinit var context: Context
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -54,7 +51,6 @@ class LocationService : DaggerService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-//        showDriverStatusNotification() //TODO
         return Service.START_STICKY
     }
 
@@ -65,7 +61,6 @@ class LocationService : DaggerService() {
 
     private fun stopService() {
         gpsLocationSettingReceiver.unregister(context)
-        notificationManagerCompat.cancel(LOCATION_SERVICE_NOTIFICATION_ID)
         stopForeground(true)
         stopSelf()
         compositeDisposable.dispose()
@@ -104,8 +99,9 @@ class LocationService : DaggerService() {
     private fun startLocationUpdates() {
         val params = GetPhotosUpdatesByLocationParams(SMALLEST_DISPLACEMENT_IN_METERS)
         getPhotoUpdatesByLocationUseCase(params)
+            .ignoreElements()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({}, ::handleFailure) // TODO: Check
+            .subscribe({}, ::handleFailure)
             .addTo(compositeDisposable)
     }
 
