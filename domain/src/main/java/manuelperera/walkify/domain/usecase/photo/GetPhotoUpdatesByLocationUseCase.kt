@@ -23,10 +23,10 @@ class GetPhotoUpdatesByLocationUseCase @Inject constructor(
                 )
                 getPhotoByLocationUseCase(getPhotoParams)
                     .onErrorResumeNext { throwable ->
-                        // TODO: Check
                         if (throwable is Failure.NotFound) Single.just(Photo.empty()) else Single.error(throwable)
                     }
             }
+            .filter { it.isEmpty().not() }
 
 }
 

@@ -14,6 +14,10 @@ data class Photo(
         return (sizeList.firstOrNull { it.label == label } ?: sizeList.first()).url
     }
 
+    fun isEmpty() : Boolean {
+        return id.isEmpty() && sizeList.isEmpty()
+    }
+
     data class PhotoSizeInfo(
         val label: Label,
         val url: String
