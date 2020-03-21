@@ -17,4 +17,7 @@
     <string name="enable_gps_services_to_record_walk">Enable GPS services to record walk</string>
     <string name="activate">Activate</string>
 
+    <!--Location Service-->
+    <string name="recording">Recording</string>
+    <string name="enjoy_your_walk">Enjoy your walk!</string>
 </resources>

@@ -10,16 +10,19 @@ import androidx.core.content.ContextCompat
 import manuelperera.walkify.presentation.R
 import javax.inject.Inject
 
-private const val GPS_CHANNEL_ID = "GPS_CHANNEL_ID"
+const val GPS_CHANNEL_ID = "GPS_CHANNEL_ID"
 private const val GPS_CHANNEL_NAME = "GPS_CHANNEL_NAME"
+
+const val LOCATION_SERVICE_CHANNEL_ID = "LOCATION_SERVICE_CHANNEL_ID"
+private const val LOCATION_CHANNEL_NAME = "LOCATION_CHANNEL_NAME"
 
 class WalkifyNotificationManager @Inject constructor(
     private val context: Context
 ) {
 
     companion object {
-        fun getGpsChannelId(): String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            GPS_CHANNEL_ID
+        fun getChannelIdByAndroidVersion(channelId: String): String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            channelId
         } else {
             ""
         }
@@ -28,14 +31,15 @@ class WalkifyNotificationManager @Inject constructor(
     val notificationManager = NotificationManagerCompat.from(context)
 
     init {
-        addGpsNotificationChannel()
+        addNotificationChannel(GPS_CHANNEL_ID, GPS_CHANNEL_NAME)
+        addNotificationChannel(LOCATION_SERVICE_CHANNEL_ID, LOCATION_CHANNEL_NAME)
     }
 
-    private fun addGpsNotificationChannel() {
+    private fun addNotificationChannel(id: String, name: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val color = ContextCompat.getColor(context, R.color.colorPrimary)
             val channel =
-                NotificationChannel(GPS_CHANNEL_ID, GPS_CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH).apply {
+                NotificationChannel(id, name, NotificationManager.IMPORTANCE_HIGH).apply {
                     lightColor = color
                     lockscreenVisibility = Notification.VISIBILITY_PUBLIC
                 }

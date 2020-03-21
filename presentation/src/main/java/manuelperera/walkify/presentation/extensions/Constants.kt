@@ -7,6 +7,11 @@ object Constants {
     const val GPS_REQUEST_CODE = 102
     // endregion
 
+    // region Notifications id's
+    const val TURN_ON_GPS_NOTIFICATION_ID = 2000
+    const val LOCATION_SERVICE_NOTIFICATION_ID = 2001
+    // endregion
+
     const val IS_APP_IN_FOREGROUND = "IS_APP_IN_FOREGROUND"
 
 }

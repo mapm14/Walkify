@@ -11,12 +11,14 @@ import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import manuelperera.walkify.presentation.R
+import manuelperera.walkify.presentation.extensions.Constants.TURN_ON_GPS_NOTIFICATION_ID
 import manuelperera.walkify.presentation.extensions.isGpsOn
+import manuelperera.walkify.presentation.pushnotification.GPS_CHANNEL_ID
 import manuelperera.walkify.presentation.pushnotification.WalkifyNotificationManager
 import timber.log.Timber
 import javax.inject.Inject
 
-private const val NOTIFICATION_ID = 141192
+
 
 class GpsLocationSettingReceiver @Inject constructor(
     private val notificationManager: NotificationManagerCompat
@@ -41,7 +43,7 @@ class GpsLocationSettingReceiver @Inject constructor(
     override fun onReceive(context: Context?, intent: Intent?) {
         context?.let { safeContext ->
             if (safeContext.isGpsOn()) {
-                notificationManager.cancel(NOTIFICATION_ID)
+                notificationManager.cancel(TURN_ON_GPS_NOTIFICATION_ID)
             } else {
                 createNotificationForEnableGPS(context)
             }
@@ -54,7 +56,7 @@ class GpsLocationSettingReceiver @Inject constructor(
         val gpsSettingsPendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val incomingRequestNotification =
-            NotificationCompat.Builder(context, WalkifyNotificationManager.getGpsChannelId())
+            NotificationCompat.Builder(context, WalkifyNotificationManager.getChannelIdByAndroidVersion(GPS_CHANNEL_ID))
                 .setSmallIcon(R.drawable.ic_retry)
                 .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_retry))
                 .setContentTitle(context.getString(R.string.enable_gps))
@@ -64,7 +66,7 @@ class GpsLocationSettingReceiver @Inject constructor(
                 .setContentIntent(gpsSettingsPendingIntent)
                 .build()
 
-        notificationManager.notify(NOTIFICATION_ID, incomingRequestNotification)
+        notificationManager.notify(TURN_ON_GPS_NOTIFICATION_ID, incomingRequestNotification)
     }
 
 }

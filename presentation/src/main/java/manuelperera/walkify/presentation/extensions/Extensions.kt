@@ -1,5 +1,6 @@
 package manuelperera.walkify.presentation.extensions
 
+import android.app.ActivityManager
 import android.content.Context
 import android.location.LocationManager
 
@@ -10,4 +11,11 @@ fun Context.isGpsOn(): Boolean {
     val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
     return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
             locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+}
+
+@Suppress("DEPRECATION")
+fun <T> Context.isServiceRunning(service: Class<T>): Boolean {
+    return (getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager)
+        .getRunningServices(Integer.MAX_VALUE)
+        .any { it.service.className == service.name }
 }

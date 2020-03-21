@@ -18,8 +18,8 @@ import javax.inject.Singleton
         ViewModelModule::class,
         ActivityModule::class,
         FragmentModule::class,
-        DataModule::class
-//        ServiceModule::class // TODO
+        DataModule::class,
+        ServiceModule::class
     ]
 )
 interface AppComponent : AndroidInjector<WalkifyApplication> {
