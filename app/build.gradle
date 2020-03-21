@@ -54,6 +54,8 @@ dependencies {
     //chucker
     debugImplementation "com.github.ChuckerTeam.Chucker:library:$chuckerVersion"
     releaseImplementation "com.github.ChuckerTeam.Chucker:library-no-op:$chuckerVersion"
+    //room
+    implementation "androidx.room:room-runtime:$roomVersion"
     //dependency injection
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
