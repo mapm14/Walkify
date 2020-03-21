@@ -43,9 +43,9 @@ class AndroidLocationProviderImpl @Inject constructor(
             return Observable.create<GpsLocation> { emitter ->
                     locationCallbackPeriodically = object : LocationCallback() {
                         override fun onLocationResult(locationResult: LocationResult?) {
-                            locationResult?.locations?.forEach { location ->
-                                Timber.w("Location mocked result: ${location.isFromMockProvider}")
+                            Timber.d("New location result: $locationResult")
 
+                            locationResult?.locations?.forEach { location ->
                                 @Suppress("ConstantConditionIf")
                                 if (BuildConfig.BUILD_TYPE != "debug" && location.isFromMockProvider) {
                                     emitter.onError(Failure.FakeLocation(resources.getString(R.string.location_mocked_message)))
@@ -70,11 +70,12 @@ class AndroidLocationProviderImpl @Inject constructor(
                     )
                     Looper.loop()
                 }
+                .doOnDispose { stopLocationUpdatesPeriodically() }
                 .doAfterTerminate { stopLocationUpdatesPeriodically() }
         }
     }
 
-    override fun stopLocationUpdatesPeriodically() {
+    private fun stopLocationUpdatesPeriodically() {
         if (::locationCallbackPeriodically.isInitialized) {
             fusedLocationProvider.removeLocationUpdates(locationCallbackPeriodically)
         }
