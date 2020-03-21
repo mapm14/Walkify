@@ -9,11 +9,11 @@ class PhotoSizeWrapperData(
     @SerializedName("sizes") val photoSizeResponse: PhotoSizeResponse
 ) : DataObject<List<Photo.SizeInfo>> {
 
-    inner class PhotoSizeResponse(
+    class PhotoSizeResponse(
         @SerializedName("size") val photoSizeInfoResponseList: List<PhotoSizeInfoResponse>
     ) {
 
-        inner class PhotoSizeInfoResponse(
+        class PhotoSizeInfoResponse(
             @SerializedName("label") val label: String,
             @SerializedName("source") val url: String
         )

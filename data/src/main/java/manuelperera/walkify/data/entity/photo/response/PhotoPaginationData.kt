@@ -8,11 +8,11 @@ class PhotoPaginationData(
     @SerializedName("photos") val photoInfo: PhotoInfoResponse
 ) : DataObject<String> {
 
-    inner class PhotoInfoResponse(
+    class PhotoInfoResponse(
         @SerializedName("photo") val photoList: List<PhotoIdResponse>
     ) {
 
-        inner class PhotoIdResponse(
+        class PhotoIdResponse(
             @SerializedName("id") val id: String
         )
 

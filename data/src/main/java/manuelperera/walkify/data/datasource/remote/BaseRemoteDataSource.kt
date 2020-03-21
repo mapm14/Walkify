@@ -66,13 +66,13 @@ open class BaseRemoteDataSource {
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
-    fun <RO : DataObject<DO>, DO : Any> modifySingleList(
-        single: Single<Result<List<RO>>>,
+    fun <Data : DataObject<Domain>, Domain : Any> modifySingleList(
+        single: Single<Result<List<Data>>>,
         timeoutTime: Long = timeout,
         retryTimes: Int = retry
-    ): Single<List<DO>> {
+    ): Single<List<Domain>> {
         return applyOperations(single, timeoutTime, retryTimes) { response ->
-            val body: List<RO>? = response.body()
+            val body: List<Data>? = response.body()
             if (body != null) {
                 getDomainObjectList(body)
             } else {
@@ -91,7 +91,6 @@ open class BaseRemoteDataSource {
             .onErrorResumeNext {
                 Single.error(getFailureUnknownError())
             }
-            .timeout(timeoutTime, TimeUnit.SECONDS, Single.error(getFailureTimeout()))
             .retry { count, throwable ->
                 count <= retryTimes && (throwable is Failure.Timeout || throwable is Failure.NoInternet)
             }
@@ -109,6 +108,9 @@ open class BaseRemoteDataSource {
 
                 } ?: throw getFailureError(data.error())
             }
+            .timeout(timeoutTime, TimeUnit.SECONDS, Single.create { emitter ->
+                emitter.tryOnError(getFailureTimeout())
+            })
     }
 
     @Suppress("UNCHECKED_CAST")

@@ -20,11 +20,11 @@ class PhotoRepositoryImpl @Inject constructor(
 
     override fun getPhotoById(id: String): Single<Photo> {
         return photoRemoteDataSource.getPhotoById(id)
-            .doOnSuccess(photoLocalDataSource::setPhotoSizeInfoUpdates)
+            .doOnSuccess(photoLocalDataSource::insert)
     }
 
     override fun getPhotoUpdates(): Observable<List<Photo>> {
-        return photoLocalDataSource.getPhotoSizeInfoUpdates()
+        return photoLocalDataSource.getPhotoListUpdates()
     }
 
     override fun clearDatabase(): Completable {
