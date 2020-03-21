@@ -1,33 +1,36 @@
 package manuelperera.walkify.presentation.ui.main
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
-import manuelperera.walkify.domain.entity.photo.PhotoSizeInfo
 import manuelperera.walkify.presentation.R
-import manuelperera.walkify.presentation.broadcastreceiver.GpsLocationSettingReceiver
 import manuelperera.walkify.presentation.databinding.ActivityMainBinding
 import manuelperera.walkify.presentation.extensions.Constants.GPS_REQUEST_CODE
 import manuelperera.walkify.presentation.extensions.isGpsOn
+import manuelperera.walkify.presentation.extensions.isServiceRunning
 import manuelperera.walkify.presentation.extensions.observe
 import manuelperera.walkify.presentation.extensions.viewModel
+import manuelperera.walkify.presentation.service.LocationService
 import manuelperera.walkify.presentation.ui.base.activity.BaseActivity
-import javax.inject.Inject
-
-private const val SMALLEST_DISPLACEMENT_IN_METERS = 100F
-private val SELECTED_LABEL = PhotoSizeInfo.Label.MEDIUM
 
 class MainActivity : BaseActivity() {
+
+    companion object {
+        fun getIntent(context: Context) = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+    }
 
     override var activityLayout: Int = R.layout.activity_main
 
     private lateinit var mainViewModel: MainViewModel
     private val photoAdapter: PhotoAdapter by lazy { PhotoAdapter() }
-
-    @Inject
-    lateinit var gpsLocationSettingReceiver: GpsLocationSettingReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,12 +38,37 @@ class MainActivity : BaseActivity() {
         setContentView(binding.root)
         setupUI(binding)
         setupViewModel()
-        startWalk()
+        if (applicationContext.isServiceRunning(LocationService::class.java)) requestPermissions()
     }
 
-    override fun onDestroy() {
-        gpsLocationSettingReceiver.unregister(this)
-        super.onDestroy()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.main_activity_menu, menu)
+        return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val item: MenuItem = menu.findItem(R.id.walk)
+        if (applicationContext.isServiceRunning(LocationService::class.java)) {
+            item.title = getString(R.string.stop_walk)
+        } else {
+            item.title = getString(R.string.start_walk)
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (item.itemId == R.id.walk) {
+            if (applicationContext.isServiceRunning(LocationService::class.java)) {
+                stopWalk()
+            } else {
+                startWalk()
+            }
+            invalidateOptionsMenu()
+            true
+        } else {
+            super.onOptionsItemSelected(item)
+        }
     }
 
     private fun setupUI(binding: ActivityMainBinding) {
@@ -49,7 +77,6 @@ class MainActivity : BaseActivity() {
 
     private fun startWalk() {
         if (isGpsOn()) {
-            gpsLocationSettingReceiver.register(this)
             requestPermissions()
         } else {
             AlertDialog.Builder(this)
@@ -66,7 +93,8 @@ class MainActivity : BaseActivity() {
     }
 
     private fun stopWalk() {
-        gpsLocationSettingReceiver.unregister(this)
+        applicationContext.stopService(Intent(this, LocationService::class.java))
+        mainViewModel.clearDatabase()
     }
 
     private fun setupViewModel() {
@@ -75,7 +103,7 @@ class MainActivity : BaseActivity() {
                 photoAdapter.addLoadingPlaceholder(4)
             }
 
-            observe(ldUrlList, photoAdapter::addPhotos)
+            observe(ldPhotoList, photoAdapter::addPhotos)
 
             observe(ldFailure) { failure ->
                 val message = failure.getMessage(getResources())
@@ -87,14 +115,27 @@ class MainActivity : BaseActivity() {
     override fun requestPermissions() {
         requestAndRun(
             permissions = listOf(ACCESS_FINE_LOCATION),
-            action = { mainViewModel.getPhotoByLocation(SMALLEST_DISPLACEMENT_IN_METERS, SELECTED_LABEL) },
+            action = this::startLocationService,
             isMandatory = true
         )
     }
 
+    private fun startLocationService() {
+        if (applicationContext.isServiceRunning(LocationService::class.java).not()) {
+            val intent = Intent(this, LocationService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                applicationContext.startForegroundService(intent)
+            } else {
+                applicationContext.startService(intent)
+            }
+        }
+
+        mainViewModel.getPhotoUpdates()
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == GPS_REQUEST_CODE && isGpsOn()) {
-            startWalk()
+            requestPermissions()
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }

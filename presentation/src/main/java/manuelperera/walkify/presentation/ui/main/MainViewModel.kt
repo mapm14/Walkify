@@ -3,40 +3,43 @@ package manuelperera.walkify.presentation.ui.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
-import manuelperera.walkify.domain.entity.photo.PhotoSizeInfo
-import manuelperera.walkify.domain.usecase.photo.GetPhotoUrlsUpdatesByLocationUseCase
-import manuelperera.walkify.domain.usecase.photo.GetPhotosUrlsUpdatesByLocationParams
+import manuelperera.walkify.domain.entity.photo.Photo
+import manuelperera.walkify.domain.usecase.photo.ClearPhotoDatabaseUseCase
+import manuelperera.walkify.domain.usecase.photo.GetPhotoUpdatesUseCase
 import manuelperera.walkify.presentation.ui.base.viewmodel.BaseViewModel
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
-    private val getPhotoUrlsUpdatesByLocationUseCase: GetPhotoUrlsUpdatesByLocationUseCase
+    private val getPhotoUpdatesUseCase: GetPhotoUpdatesUseCase,
+    private val clearPhotoDatabaseUseCase: ClearPhotoDatabaseUseCase
 ) : BaseViewModel() {
 
-    private val _ldUrlList: MutableLiveData<MutableList<String>> = MutableLiveData()
-    val ldUrlList: LiveData<MutableList<String>> = _ldUrlList
+    private val _ldPhotoList: MutableLiveData<List<Photo>> = MutableLiveData()
+    val ldPhotoList: LiveData<List<Photo>> = _ldPhotoList
 
-    fun getPhotoByLocation(smallestDisplacementInMeters: Float, selectedLabel: PhotoSizeInfo.Label) {
-        val params = GetPhotosUrlsUpdatesByLocationParams(smallestDisplacementInMeters, selectedLabel)
+    private var updatesDisposable: Disposable? = null
 
-        getPhotoUrlsUpdatesByLocationUseCase(params)
+    fun getPhotoUpdates() {
+        updatesDisposable?.dispose()
+
+        updatesDisposable = getPhotoUpdatesUseCase(Unit)
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { loading() }
-            .subscribe(this::addUrlToList)
-            { throwable ->
-                handleFailure(throwable) { getPhotoByLocation(smallestDisplacementInMeters, selectedLabel) }
-            }
+            .subscribe({ urlList ->
+                _ldPhotoList.value = urlList
+            }, { throwable ->
+                handleFailure(throwable) { getPhotoUpdates() }
+            })
             .addTo(compositeDisposable)
     }
 
-    private fun addUrlToList(photoUrl: String) {
-        _ldUrlList.value?.let { mutable ->
-            mutable.add(0, photoUrl)
-            _ldUrlList.value = mutable
-        } ?: kotlin.run {
-            _ldUrlList.value = mutableListOf(photoUrl)
-        }
+    fun clearDatabase() {
+        updatesDisposable?.dispose()
+
+        clearPhotoDatabaseUseCase(Unit)
+            .subscribe()
     }
 
 }
