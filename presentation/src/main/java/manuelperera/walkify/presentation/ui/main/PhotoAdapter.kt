@@ -16,12 +16,7 @@ class PhotoAdapter : NotPagingAdapter<PhotoAdapter.PhotoUI>() {
 
     override var onBindItem: (View, PhotoUI) -> Unit = { itemView, photo ->
         val binding = ItemPhotoBinding.bind(itemView)
-        if (photo.url.isNotEmpty()) {
-            binding.photoView.load(photo.url)
-        } else {
-            // TODO: Check
-            binding.photoView.background = resources?.getDrawable(R.drawable.ic_retry, null)
-        }
+        if (photo.url.isNotEmpty()) binding.photoView.load(photo.url)
     }
 
     fun addPhotos(photoList: List<Photo>) {
