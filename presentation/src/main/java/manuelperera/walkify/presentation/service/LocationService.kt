@@ -90,8 +90,8 @@ class LocationService : DaggerService() {
             .setContentTitle(getString(R.string.recording))
             .setContentText(getString(R.string.enjoy_your_walk))
             .setTicker(getString(R.string.recording))
-            .setSmallIcon(R.drawable.ic_retry) //TODO
-            .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_retry))//TODO
+            .setSmallIcon(R.drawable.ic_walk)
+            .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_walk))
             .setContentIntent(contentIntent)
             .setPriority(priority)
             .setDefaults(Notification.DEFAULT_SOUND)

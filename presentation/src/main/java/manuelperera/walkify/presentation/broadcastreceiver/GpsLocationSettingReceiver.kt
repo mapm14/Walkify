@@ -57,8 +57,8 @@ class GpsLocationSettingReceiver @Inject constructor(
 
         val incomingRequestNotification =
             NotificationCompat.Builder(context, WalkifyNotificationManager.getChannelIdByAndroidVersion(GPS_CHANNEL_ID))
-                .setSmallIcon(R.drawable.ic_retry)
-                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_retry))
+                .setSmallIcon(R.drawable.ic_gps)
+                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_gps))
                 .setContentTitle(context.getString(R.string.enable_gps))
                 .setContentText(context.getString(R.string.please_enable_gps_to_resume_walk_track))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

@@ -13,7 +13,6 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import manuelperera.walkify.presentation.R
 import manuelperera.walkify.presentation.ui.base.GlideApp
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View =
@@ -21,7 +20,7 @@ fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false):
 
 fun ImageView.load(
     url: String?,
-    @DrawableRes placeholderRes: Int = R.drawable.ic_retry, // TODO: Change placeholder
+    @DrawableRes placeholderRes: Int,
     onSuccess: () -> Unit = {},
     onError: () -> Unit = {}
 ) {
