@@ -28,9 +28,9 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
     }
 
     //region Permissions
-    protected open fun requestPermissions() {}
+    protected open fun checkOrRequestPermissions() {}
 
-    protected fun requestAndRun(
+    protected fun checkOrRequestAndRun(
         permissions: List<String>,
         action: () -> Unit,
         failAction: (List<String>, Boolean) -> Unit = { _, _ -> },
@@ -51,7 +51,7 @@ abstract class BaseActivity : DaggerAppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == Constants.SETTINGS_REQUEST_CODE) {
-            requestPermissions()
+            checkOrRequestPermissions()
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }

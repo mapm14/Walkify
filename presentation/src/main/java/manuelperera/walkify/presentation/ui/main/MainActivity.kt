@@ -38,7 +38,7 @@ class MainActivity : BaseActivity() {
         setContentView(binding.root)
         setupUI(binding)
         setupViewModel()
-        if (applicationContext.isServiceRunning(LocationService::class.java)) requestPermissions()
+        if (isLocationServiceRunning()) checkOrRequestPermissions()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -49,7 +49,7 @@ class MainActivity : BaseActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val item: MenuItem = menu.findItem(R.id.walk)
-        if (applicationContext.isServiceRunning(LocationService::class.java)) {
+        if (isLocationServiceRunning()) {
             item.title = getString(R.string.stop_walk)
         } else {
             item.title = getString(R.string.start_walk)
@@ -59,7 +59,7 @@ class MainActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (item.itemId == R.id.walk) {
-            if (applicationContext.isServiceRunning(LocationService::class.java)) {
+            if (isLocationServiceRunning()) {
                 stopWalk()
             } else {
                 startWalk()
@@ -77,7 +77,7 @@ class MainActivity : BaseActivity() {
 
     private fun startWalk() {
         if (isGpsOn()) {
-            requestPermissions()
+            checkOrRequestPermissions()
         } else {
             AlertDialog.Builder(this)
                 .setTitle(getString(R.string.gps_needed))
@@ -112,8 +112,8 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    override fun requestPermissions() {
-        requestAndRun(
+    override fun checkOrRequestPermissions() {
+        checkOrRequestAndRun(
             permissions = listOf(ACCESS_FINE_LOCATION),
             action = this::startLocationService,
             isMandatory = true
@@ -121,7 +121,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun startLocationService() {
-        if (applicationContext.isServiceRunning(LocationService::class.java).not()) {
+        if (isLocationServiceRunning().not()) {
             val intent = Intent(this, LocationService::class.java)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 applicationContext.startForegroundService(intent)
@@ -133,9 +133,11 @@ class MainActivity : BaseActivity() {
         mainViewModel.getPhotoUpdates()
     }
 
+    private fun isLocationServiceRunning(): Boolean = applicationContext.isServiceRunning(LocationService::class.java)
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == GPS_REQUEST_CODE && isGpsOn()) {
-            requestPermissions()
+            checkOrRequestPermissions()
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }
