@@ -5,6 +5,10 @@ import manuelperera.walkify.domain.repository.PhotoRepository
 import manuelperera.walkify.domain.usecase.base.SingleUseCase
 import javax.inject.Inject
 
+/**
+ *  Would return [manuelperera.walkify.domain.entity.base.Failure.NotFound] if there is no photos
+ *  for that given location
+ */
 class GetPhotoIdByLocationUseCase @Inject constructor(
     private val photoRepository: PhotoRepository
 ) : SingleUseCase<String, GetPhotoIdByLocationParams> {

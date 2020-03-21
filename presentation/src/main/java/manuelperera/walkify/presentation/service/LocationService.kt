@@ -14,9 +14,8 @@ import dagger.android.DaggerService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
-import manuelperera.walkify.domain.entity.photo.PhotoSizeInfo
-import manuelperera.walkify.domain.usecase.photo.GetPhotoUrlsUpdatesByLocationUseCase
-import manuelperera.walkify.domain.usecase.photo.GetPhotosUrlsUpdatesByLocationParams
+import manuelperera.walkify.domain.usecase.photo.GetPhotoUpdatesByLocationUseCase
+import manuelperera.walkify.domain.usecase.photo.GetPhotosUpdatesByLocationParams
 import manuelperera.walkify.presentation.R
 import manuelperera.walkify.presentation.broadcastreceiver.GpsLocationSettingReceiver
 import manuelperera.walkify.presentation.extensions.Constants.LOCATION_SERVICE_NOTIFICATION_ID
@@ -27,7 +26,6 @@ import timber.log.Timber
 import javax.inject.Inject
 
 private const val SMALLEST_DISPLACEMENT_IN_METERS = 100F
-private val SELECTED_LABEL = PhotoSizeInfo.Label.MEDIUM
 
 class LocationService : DaggerService() {
 
@@ -35,7 +33,7 @@ class LocationService : DaggerService() {
     lateinit var gpsLocationSettingReceiver: GpsLocationSettingReceiver
 
     @Inject
-    lateinit var getPhotoUrlsUpdatesByLocationUseCase: GetPhotoUrlsUpdatesByLocationUseCase
+    lateinit var getPhotoUpdatesByLocationUseCase: GetPhotoUpdatesByLocationUseCase
 
     @Inject
     lateinit var notificationManagerCompat: NotificationManagerCompat
@@ -104,8 +102,8 @@ class LocationService : DaggerService() {
     }
 
     private fun startLocationUpdates() {
-        val params = GetPhotosUrlsUpdatesByLocationParams(SMALLEST_DISPLACEMENT_IN_METERS, SELECTED_LABEL)
-        getPhotoUrlsUpdatesByLocationUseCase(params)
+        val params = GetPhotosUpdatesByLocationParams(SMALLEST_DISPLACEMENT_IN_METERS)
+        getPhotoUpdatesByLocationUseCase(params)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({}, ::handleFailure) // TODO: Check
             .addTo(compositeDisposable)

@@ -24,6 +24,8 @@ sealed class Failure(var retryAction: () -> Unit = {}) : Throwable() {
 
     object Unauthorized : Failure()
 
+    object NotFound : Failure()
+
     class FakeLocation(override val msg: String) : FailureWithMessage(msg)
 
     class ResolvableGooglePlayServicesError(val resultCode: Int) : Failure()

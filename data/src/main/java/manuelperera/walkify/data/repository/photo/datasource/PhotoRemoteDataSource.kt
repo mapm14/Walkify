@@ -3,7 +3,7 @@ package manuelperera.walkify.data.repository.photo.datasource
 import io.reactivex.Single
 import manuelperera.walkify.data.datasource.remote.BaseRemoteDataSource
 import manuelperera.walkify.data.repository.photo.data.PhotoApi
-import manuelperera.walkify.domain.entity.photo.PhotoSizeInfo
+import manuelperera.walkify.domain.entity.photo.Photo
 import javax.inject.Inject
 
 class PhotoRemoteDataSource @Inject constructor(
@@ -14,8 +14,8 @@ class PhotoRemoteDataSource @Inject constructor(
         return modifySingle(photoApi.getPhotoIdByLocation(latitude, longitude))
     }
 
-    fun getPhotoById(id: String): Single<List<PhotoSizeInfo>> {
-        return modifySingle(photoApi.getPhotoById(id))
+    fun getPhotoById(id: String): Single<Photo> {
+        return modifySingle(photoApi.getPhotoById(id)).map { Photo(id, it) }
     }
 
 }

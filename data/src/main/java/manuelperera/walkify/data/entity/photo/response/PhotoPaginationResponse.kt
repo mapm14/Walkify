@@ -2,6 +2,7 @@ package manuelperera.walkify.data.entity.photo.response
 
 import com.google.gson.annotations.SerializedName
 import manuelperera.walkify.data.entity.base.ResponseObject
+import manuelperera.walkify.domain.entity.base.Failure
 
 class PhotoPaginationResponse(
     @SerializedName("photos") val photoInfo: PhotoInfoResponse
@@ -17,7 +18,6 @@ class PhotoPaginationResponse(
 
     }
 
-    // TODO: Check what to do in case of NoSuchElementException
-    override fun toDomain(): String = photoInfo.photoList.firstOrNull()?.id ?: ""
+    override fun toDomain(): String = photoInfo.photoList.firstOrNull()?.id ?: throw Failure.NotFound
 
 }
