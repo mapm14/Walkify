@@ -11,28 +11,26 @@ import manuelperera.walkify.presentation.R
 import javax.inject.Inject
 
 const val GPS_CHANNEL_ID = "GPS_CHANNEL_ID"
-private const val GPS_CHANNEL_NAME = "GPS_CHANNEL_NAME"
-
 const val LOCATION_SERVICE_CHANNEL_ID = "LOCATION_SERVICE_CHANNEL_ID"
-private const val LOCATION_CHANNEL_NAME = "LOCATION_CHANNEL_NAME"
 
 class WalkifyNotificationManager @Inject constructor(
     private val context: Context
 ) {
 
     companion object {
-        fun getChannelIdByAndroidVersion(channelId: String): String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            channelId
-        } else {
-            ""
-        }
+        fun getChannelIdByAndroidVersion(channelId: String): String =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                channelId
+            } else {
+                ""
+            }
     }
 
     val notificationManager = NotificationManagerCompat.from(context)
 
     init {
-        addNotificationChannel(GPS_CHANNEL_ID, GPS_CHANNEL_NAME)
-        addNotificationChannel(LOCATION_SERVICE_CHANNEL_ID, LOCATION_CHANNEL_NAME)
+        addNotificationChannel(GPS_CHANNEL_ID, context.getString(R.string.gps_channel_name))
+        addNotificationChannel(LOCATION_SERVICE_CHANNEL_ID, context.getString(R.string.location_channel_name))
     }
 
     private fun addNotificationChannel(id: String, name: String) {

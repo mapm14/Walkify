@@ -25,4 +25,8 @@
     <string name="start_walk">Start walk</string>
     <string name="stop_walk">Stop walk</string>
 
+    <!--Notification channels-->
+    <string name="gps_channel_name">GPS state</string>
+    <string name="location_channel_name">Walk recording</string>
+
 </resources>
