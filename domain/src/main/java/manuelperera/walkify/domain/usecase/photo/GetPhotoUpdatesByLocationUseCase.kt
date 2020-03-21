@@ -17,16 +17,15 @@ class GetPhotoUpdatesByLocationUseCase @Inject constructor(
     override fun invoke(params: GetPhotosUpdatesByLocationParams): Observable<Photo> =
         getLocationRefreshesUseCase(GetLocationRefreshesParams(params.smallestDisplacementInMeters))
             .flatMapSingle { gpsLocation ->
-                val getPhotoParams = GetPhotoUrlByLocationParams(
+                val getPhotoByLocationParams = GetPhotoByLocationParams(
                     latitude = gpsLocation.latitude,
                     longitude = gpsLocation.longitude
                 )
-                getPhotoByLocationUseCase(getPhotoParams)
+                getPhotoByLocationUseCase(getPhotoByLocationParams)
                     .onErrorResumeNext { throwable ->
                         if (throwable is Failure.NotFound) Single.just(Photo.empty()) else Single.error(throwable)
                     }
             }
-            .filter { it.isEmpty().not() }
 
 }
 

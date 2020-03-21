@@ -12,9 +12,9 @@ import javax.inject.Inject
 class GetPhotoByLocationUseCase @Inject constructor(
     private val getPhotoIdByLocationUseCase: GetPhotoIdByLocationUseCase,
     private val getPhotoByIdUseCase: GetPhotoByIdUseCase
-) : SingleUseCase<Photo, GetPhotoUrlByLocationParams> {
+) : SingleUseCase<Photo, GetPhotoByLocationParams> {
 
-    override fun invoke(params: GetPhotoUrlByLocationParams): Single<Photo> =
+    override fun invoke(params: GetPhotoByLocationParams): Single<Photo> =
         getPhotoIdByLocationUseCase(GetPhotoIdByLocationParams(params.latitude, params.longitude))
             .flatMap { photoId ->
                 val getPhotoParams = GetPhotoByIdParams(photoId)
@@ -23,7 +23,7 @@ class GetPhotoByLocationUseCase @Inject constructor(
 
 }
 
-class GetPhotoUrlByLocationParams(
+data class GetPhotoByLocationParams(
     val latitude: Double,
     val longitude: Double
 )

@@ -18,7 +18,7 @@ class GetPhotoIdByLocationUseCase @Inject constructor(
 
 }
 
-class GetPhotoIdByLocationParams(
+data class GetPhotoIdByLocationParams(
     val latitude: Double,
     val longitude: Double
 )
