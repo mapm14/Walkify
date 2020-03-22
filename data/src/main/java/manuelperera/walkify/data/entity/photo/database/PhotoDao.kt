@@ -14,6 +14,9 @@ interface PhotoDao {
     @Query("SELECT * FROM $PHOTO_ENTITY_TABLE_NAME ORDER BY addedDate DESC")
     fun getAll(): Observable<List<PhotoEntityDb>>
 
+    @Query("SELECT * FROM $PHOTO_ENTITY_TABLE_NAME ORDER BY addedDate DESC LIMIT 1")
+    fun getLastInserted(): PhotoEntityDb?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg photoDatabase: PhotoEntityDb)
 

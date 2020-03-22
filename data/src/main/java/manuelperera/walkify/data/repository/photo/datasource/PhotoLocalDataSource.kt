@@ -20,7 +20,10 @@ class PhotoLocalDataSource @Inject constructor(
     }
 
     fun insert(photo: Photo) {
-        database.photoDao().insertAll(PhotoEntityDb(photo))
+        val lastInserted: PhotoEntityDb? = database.photoDao().getLastInserted()
+        if (photo.id != lastInserted?.id) {
+            database.photoDao().insertAll(PhotoEntityDb(photo))
+        }
     }
 
     fun clearDatabase(): Completable {

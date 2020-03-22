@@ -1,13 +1,11 @@
 package manuelperera.walkify.data.repository.photo.datasource
 
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import io.reactivex.Completable
 import io.reactivex.Observable
 import manuelperera.walkify.data.datasource.local.AppDatabase
 import manuelperera.walkify.data.entity.photo.database.PhotoDao
+import manuelperera.walkify.data.entity.photo.database.PhotoEntityDb
 import manuelperera.walkify.data.entity.photo.database.PhotoEntityDbFactory
 import manuelperera.walkify.domain.entity.photo.Photo
 import org.junit.Before
@@ -15,6 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class PhotoLocalDataSourceUnitTest {
@@ -52,12 +51,27 @@ class PhotoLocalDataSourceUnitTest {
     }
 
     @Test
-    fun `insert should insert PhotoEntityDb`() {
-        val photo = Photo.empty()
+    fun `insert should insert PhotoEntityDb because id is different from last inserted`() {
+        val photo = Photo("PHOTO_ID", listOf())
+        val photoEntityDb = PhotoEntityDb("PHOTO_ID_2", listOf(), Date())
+        whenever(photoDao.getLastInserted())
+            .doReturn(photoEntityDb)
 
         localDataSource.insert(photo)
 
         verify(photoDao).insertAll(any())
+    }
+
+    @Test
+    fun `insert should not insert PhotoEntityDb because id is equals from last inserted`() {
+        val photo = Photo("PHOTO_ID", listOf())
+        val photoEntityDb = PhotoEntityDb(photo)
+        whenever(photoDao.getLastInserted())
+            .doReturn(photoEntityDb)
+
+        localDataSource.insert(photo)
+
+        verify(photoDao, never()).insertAll(any())
     }
 
     @Test
