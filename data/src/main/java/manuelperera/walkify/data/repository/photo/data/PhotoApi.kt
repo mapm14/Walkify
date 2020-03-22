@@ -13,6 +13,10 @@ interface PhotoApi {
     fun getPhotoIdByLocation(
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
+        @Query("accuracy") accuracy: Int = 16, // street accuracy
+        @Query("content_type") contentType: Int = 1, // just photos
+        @Query("geo_context") geoContext: Int = 2, // outdoors
+        @Query("radius") radius: Double = 0.09, // radius in Km
         @Query("method") method: String = "flickr.photos.search",
         @Query("per_page") perPage: Int = 1
     ): Single<Result<PhotoPaginationData>>
