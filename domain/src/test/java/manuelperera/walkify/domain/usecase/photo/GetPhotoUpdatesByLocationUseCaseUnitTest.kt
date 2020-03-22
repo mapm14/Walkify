@@ -78,6 +78,20 @@ class GetPhotoUpdatesByLocationUseCaseUnitTest {
 
     @Test
     fun `invoke should return Observable with Photos when GetPhotoByLocationUseCase returns Failure-NotFound`() {
+        returnObservableWithPhotosWhenFailureOccurs(Failure.NotFound)
+    }
+
+    @Test
+    fun `invoke should return Observable with Photos when GetPhotoByLocationUseCase returns Failure-NoInternet`() {
+        returnObservableWithPhotosWhenFailureOccurs(Failure.NoInternet("No Internet"))
+    }
+
+    @Test
+    fun `invoke should return Observable with Photos when GetPhotoByLocationUseCase returns Failure-Timeout`() {
+        returnObservableWithPhotosWhenFailureOccurs(Failure.Timeout("Slow connection"))
+    }
+
+    private fun returnObservableWithPhotosWhenFailureOccurs(failure: Failure) {
         val gpsLocationList = getListOfGpsLocation()
         val observable: Observable<GpsLocation> = Observable.just(gpsLocationList).flatMapIterable()
         val getLocationRefreshesParams = GetLocationRefreshesParams(params.smallestDisplacementInMeters)
@@ -89,7 +103,7 @@ class GetPhotoUpdatesByLocationUseCaseUnitTest {
             val isError = Random.nextBoolean()
             val singlePhoto = if (isError) {
                 photoResultList.add(Photo.empty())
-                Single.error(Failure.NotFound)
+                Single.error(failure)
             } else {
                 val photo = Photo(Random.nextInt().toString(), emptyList())
                 photoResultList.add(photo)

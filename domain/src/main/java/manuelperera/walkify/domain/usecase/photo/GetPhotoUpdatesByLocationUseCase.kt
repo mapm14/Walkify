@@ -23,7 +23,11 @@ class GetPhotoUpdatesByLocationUseCase @Inject constructor(
                 )
                 getPhotoByLocationUseCase(getPhotoByLocationParams)
                     .onErrorResumeNext { throwable ->
-                        if (throwable is Failure.NotFound) Single.just(Photo.empty()) else Single.error(throwable)
+                        if (throwable is Failure.NotFound || throwable is Failure.NoInternet || throwable is Failure.Timeout) {
+                            Single.just(Photo.empty())
+                        } else {
+                            Single.error(throwable)
+                        }
                     }
             }
 

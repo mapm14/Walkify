@@ -107,7 +107,7 @@ class LocationService : DaggerService() {
 
     private fun handleFailure(throwable: Throwable) {
         Timber.e(throwable)
-//        showDriverStatusNotification() // TODO
+        // TODO: Show push notification to the user and add way to handle the error
     }
 
 }
