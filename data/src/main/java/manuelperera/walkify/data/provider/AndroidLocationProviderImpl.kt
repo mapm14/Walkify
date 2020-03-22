@@ -3,7 +3,6 @@ package manuelperera.walkify.data.provider
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.res.Resources
 import android.os.Build
 import android.os.Looper
 import com.chuckerteam.chucker.BuildConfig
@@ -23,7 +22,6 @@ private const val REFRESH_INTERVAL_IN_MILLIS = 60000L
 
 class AndroidLocationProviderImpl @Inject constructor(
     private val fusedLocationProvider: FusedLocationProviderClient,
-    private val resources: Resources,
     private val context: Context
 ) : AndroidLocationProvider {
 
@@ -48,7 +46,7 @@ class AndroidLocationProviderImpl @Inject constructor(
                             locationResult?.locations?.forEach { location ->
                                 @Suppress("ConstantConditionIf")
                                 if (BuildConfig.BUILD_TYPE != "debug" && location.isFromMockProvider) {
-                                    emitter.onError(Failure.FakeLocation(resources.getString(R.string.location_mocked_message)))
+                                    emitter.onError(Failure.FakeLocation(context.getString(R.string.location_mocked_message)))
                                 } else {
                                     val gpsLocation = GpsLocation(
                                         latitude = location.latitude,
