@@ -1,0 +1,55 @@
+ext {
+    //versioning
+    generateVersionName = { BigDecimal versionCode ->
+        int patch = versionCode.remainder(1000)
+        int minor = (versionCode / 1000).remainder(1000)
+        int major = (versionCode / 1000000).remainder(1000)
+        "$major.$minor.$patch"
+    }
+    //App VersionCode Rule: Major_Minor_Patch; The version code structure must be like: AA_XXX_YYY, which
+    //000 <= X <= 999, 000 <= Y <= 999 and 1 <= A <= 99
+    appVersionCode = 1_000_000
+    appVersionName = generateVersionName(appVersionCode)
+    //android
+    minSdkVersion = 21
+    targetSdkVersion = 29
+    versionCode = appVersionCode
+    versionName = appVersionName
+    androidCompileSdkVersion = 29
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    //libraries
+    //rx
+    rxKotlinVersion = '2.3.0'
+    rxAndroidVersion = '2.1.1'
+    rxJavaVersion = '2.2.10'
+    rxBindingVersion = '3.1.0'
+    //network
+    retrofit2Version = '2.7.2'
+    okhttpLoggingVersion = '4.4.0'
+    chuckerVersion = '3.1.2'
+    //android
+    lifecycleVersion = '2.2.0'
+    constraintLayoutVersion = '2.0.0-beta4'
+    materialVersion = '1.2.0-alpha05'
+    //room
+    roomVersion = '2.2.5'
+    //image processor
+    glideVersion = '4.11.0'
+    //play-services
+    servicesLocationVersion = '17.0.0'
+    //dependency injection
+    daggerVersion = '2.27'
+    //other
+    timberVersion = '4.7.1'
+    //UI
+    shimmerVersion = '0.5.0'
+    //test
+    mockitoKotlinVersion = '2.2.0'
+    mockitoCoreVersion = '3.3.0'
+    mockitoInlineVersion = '3.3.0'
+    espressoVersion = '3.2.0'
+    junitVersion = '4.13'
+    supportTestVersion = '1.1.1'
+    testCoreVersion = '1.1.0'
+    testExtJunitVersion = '1.0.0'
+}

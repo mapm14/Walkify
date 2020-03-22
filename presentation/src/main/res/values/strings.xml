@@ -1,0 +1,37 @@
+<resources>
+
+    <!--Permissions-->
+    <string name="hard_deny_permission">Permissions required</string>
+    <string name="hard_deny_permission_message">Permissions are required for continue</string>
+    <string name="hard_deny_permission_not_mandatory">Mandatory permissions were denied</string>
+    <string name="hard_deny_permission_not_mandatory_message">If you want to grant permissions please go to settings of the App</string>
+    <string name="hard_deny_permission_go_to_settings">GO TO SETTINGS</string>
+    <string name="please_enable_permissions">Please enable permissions to continue</string>
+    <string name="no_results_yet">No results yet :(</string>
+    <string name="retry">Retry</string>
+
+    <!--GPS-->
+    <string name="enable_gps">Enable GPS!</string>
+    <string name="please_enable_gps_to_resume_walk_track">Please enable GPS to resume walk track</string>
+    <string name="gps_needed">GPS needed</string>
+    <string name="enable_gps_services_to_record_walk">Enable GPS services to record walk</string>
+    <string name="activate">Activate</string>
+
+    <!--Location Service-->
+    <string name="recording">Recording</string>
+    <string name="enjoy_your_walk">Enjoy your walk!</string>
+
+    <!--Main Activity Menu-->
+    <string name="start_walk">Start walk</string>
+    <string name="stop_walk">Stop walk</string>
+
+    <!--Notification channels-->
+    <string name="gps_channel_name">GPS state</string>
+    <string name="location_channel_name">Walk recording</string>
+
+    <!--Google Play Services-->
+    <string name="google_play_services_required">Google Play Services are required</string>
+    <string name="google_play_services_required_message">Please install them for use the app.</string>
+    <string name="okay">Okay</string>
+
+</resources>
