@@ -6,6 +6,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
 import manuelperera.walkify.domain.entity.photo.Photo
+import manuelperera.walkify.domain.usecase.googleplayservices.CheckGooglePlayServicesUseCase
 import manuelperera.walkify.domain.usecase.photo.ClearPhotoDatabaseUseCase
 import manuelperera.walkify.domain.usecase.photo.GetPhotoUpdatesUseCase
 import manuelperera.walkify.presentation.entity.base.StateResult
@@ -14,13 +15,28 @@ import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
     private val getPhotoUpdatesUseCase: GetPhotoUpdatesUseCase,
-    private val clearPhotoDatabaseUseCase: ClearPhotoDatabaseUseCase
+    private val clearPhotoDatabaseUseCase: ClearPhotoDatabaseUseCase,
+    private val checkGooglePlayServicesUseCase: CheckGooglePlayServicesUseCase
 ) : BaseViewModel() {
 
     private val _ldPhotoListResult: MutableLiveData<StateResult<List<Photo>>> = MutableLiveData()
     val ldPhotoListResult: LiveData<StateResult<List<Photo>>> = _ldPhotoListResult
 
     private var updatesDisposable: Disposable? = null
+
+    init {
+        checkGooglePlayServices()
+    }
+
+    fun checkGooglePlayServices() {
+        checkGooglePlayServicesUseCase(Unit)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({}, { throwable ->
+                val failure = getFailure(throwable) { checkGooglePlayServices() }
+                _ldPhotoListResult.value = StateResult.Error(failure)
+            })
+            .addTo(compositeDisposable)
+    }
 
     fun getPhotoUpdates() {
         updatesDisposable?.dispose()

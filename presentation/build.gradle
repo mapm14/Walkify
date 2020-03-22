@@ -38,6 +38,8 @@ configurations {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    //google
+    implementation "com.google.android.gms:play-services-location:$servicesLocationVersion"
     //reactive
     implementation "com.jakewharton.rxbinding3:rxbinding:$rxBindingVersion"
     //chucker

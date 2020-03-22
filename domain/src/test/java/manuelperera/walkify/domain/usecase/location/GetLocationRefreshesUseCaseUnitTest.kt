@@ -2,12 +2,10 @@ package manuelperera.walkify.domain.usecase.location
 
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.whenever
-import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.flatMapIterable
 import manuelperera.walkify.domain.entity.location.GpsLocation
 import manuelperera.walkify.domain.provider.AndroidLocationProvider
-import manuelperera.walkify.domain.usecase.googleplayservices.CheckGooglePlayServicesUseCase
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,9 +17,6 @@ import kotlin.random.Random
 class GetLocationRefreshesUseCaseUnitTest {
 
     @Mock
-    private lateinit var checkGooglePlayServicesUseCase: CheckGooglePlayServicesUseCase
-
-    @Mock
     private lateinit var androidLocationProvider: AndroidLocationProvider
 
     private lateinit var useCase: GetLocationRefreshesUseCase
@@ -30,7 +25,6 @@ class GetLocationRefreshesUseCaseUnitTest {
     @Before
     fun setUp() {
         useCase = GetLocationRefreshesUseCase(
-            checkGooglePlayServices = checkGooglePlayServicesUseCase,
             androidLocationProvider = androidLocationProvider
         )
     }
@@ -54,8 +48,6 @@ class GetLocationRefreshesUseCaseUnitTest {
     fun `invoke should return Observable with GpsLocations`() {
         val gpsLocationList = getListOfGpsLocation()
         val observable: Observable<GpsLocation> = Observable.just(gpsLocationList).flatMapIterable()
-        whenever(checkGooglePlayServicesUseCase(Unit))
-            .doReturn(Completable.complete())
         whenever(androidLocationProvider.locationUpdatesPeriodically(params.smallestDisplacementInMeters))
             .doReturn(observable)
 

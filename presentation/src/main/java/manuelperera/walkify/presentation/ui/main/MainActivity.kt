@@ -10,14 +10,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import manuelperera.walkify.domain.entity.base.Failure
 import manuelperera.walkify.presentation.R
 import manuelperera.walkify.presentation.databinding.ActivityMainBinding
 import manuelperera.walkify.presentation.entity.base.StateResult
+import manuelperera.walkify.presentation.extensions.*
+import manuelperera.walkify.presentation.extensions.Constants.GOOGLE_API_AVAILABILITY_REQUEST_CODE
 import manuelperera.walkify.presentation.extensions.Constants.GPS_REQUEST_CODE
-import manuelperera.walkify.presentation.extensions.isGpsOn
-import manuelperera.walkify.presentation.extensions.isServiceRunning
-import manuelperera.walkify.presentation.extensions.observe
-import manuelperera.walkify.presentation.extensions.viewModel
 import manuelperera.walkify.presentation.service.LocationService
 import manuelperera.walkify.presentation.ui.base.activity.BaseActivity
 
@@ -97,11 +96,19 @@ class MainActivity : BaseActivity() {
                 when (result) {
                     is StateResult.HasValues -> photoAdapter.addPhotos(result.value)
                     is StateResult.Loading -> photoAdapter.addLoadingPlaceholder(4)
-                    is StateResult.Error -> {
-                        val message = result.failure.getMessage(getResources())
-                        photoAdapter.addError(message, result.failure.retryAction)
-                    }
+                    is StateResult.Error -> handleFailure(result.failure)
                 }
+            }
+        }
+    }
+
+    private fun handleFailure(failure: Failure) {
+        when (failure) {
+            is Failure.ResolvableGooglePlayServicesError -> showResolvableGooglePlayServiceError(failure)
+            is Failure.NoResolvableGooglePlayServicesError -> showNotResolvableGooglePlayServicesError()
+            else -> {
+                val message = failure.getMessage(resources)
+                photoAdapter.addError(message, failure.retryAction)
             }
         }
     }
@@ -137,6 +144,8 @@ class MainActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == GPS_REQUEST_CODE && isGpsOn()) {
             checkOrRequestPermissions()
+        } else if (requestCode == GOOGLE_API_AVAILABILITY_REQUEST_CODE) {
+            mainViewModel.checkGooglePlayServices()
         } else {
             super.onActivityResult(requestCode, resultCode, data)
         }

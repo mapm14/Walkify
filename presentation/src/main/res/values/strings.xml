@@ -29,4 +29,9 @@
     <string name="gps_channel_name">GPS state</string>
     <string name="location_channel_name">Walk recording</string>
 
+    <!--Google Play Services-->
+    <string name="google_play_services_required">Google Play Services are required</string>
+    <string name="google_play_services_required_message">Please install them for use the app.</string>
+    <string name="okay">Okay</string>
+
 </resources>
