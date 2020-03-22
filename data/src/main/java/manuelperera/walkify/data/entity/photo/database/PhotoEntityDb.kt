@@ -11,11 +11,16 @@ import manuelperera.walkify.data.extensions.toEnum
 import manuelperera.walkify.domain.entity.photo.Photo
 import java.util.*
 
+/**
+ * I use the [addedDate] as a [androidx.room.PrimaryKey] to avoid conflicts with same [id], an user can move in
+ * circles and same photo with same [id] will be fetched twice but on different [java.util.Date]
+ */
 @Entity(tableName = PHOTO_ENTITY_TABLE_NAME)
 class PhotoEntityDb(
-    @PrimaryKey val id: String,
+    val id: String,
     @TypeConverters(PhotoEntityDbDataConverter::class) val sizeInfoList: List<SizeInfo>,
-    @TypeConverters(TimestampConverter::class) val addedDate: Date
+    @TypeConverters(TimestampConverter::class)
+    @PrimaryKey val addedDate: Date
 ) : DataObject<Photo> {
 
     constructor(photo: Photo) : this(

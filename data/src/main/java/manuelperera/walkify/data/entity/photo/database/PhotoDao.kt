@@ -2,6 +2,7 @@ package manuelperera.walkify.data.entity.photo.database
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -13,7 +14,7 @@ interface PhotoDao {
     @Query("SELECT * FROM $PHOTO_ENTITY_TABLE_NAME ORDER BY addedDate DESC")
     fun getAll(): Observable<List<PhotoEntityDb>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg photoDatabase: PhotoEntityDb)
 
     @Query("DELETE FROM $PHOTO_ENTITY_TABLE_NAME")
