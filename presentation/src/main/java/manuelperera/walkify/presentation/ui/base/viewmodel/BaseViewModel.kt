@@ -20,12 +20,6 @@ abstract class BaseViewModel : ViewModel() {
     @Inject
     lateinit var chuckerCollector: Lazy<ChuckerCollector>
 
-    private val _ldLoading: MutableLiveData<Unit> = MutableLiveData()
-    val ldLoading: LiveData<Unit> = _ldLoading
-
-    private val _ldFailure: MutableLiveData<Failure> = MutableLiveData()
-    val ldFailure: LiveData<Failure> = _ldFailure
-
     protected val compositeDisposable = CompositeDisposable()
 
     override fun onCleared() {
@@ -33,11 +27,7 @@ abstract class BaseViewModel : ViewModel() {
         super.onCleared()
     }
 
-    protected fun loading() {
-        _ldLoading.value = Unit
-    }
-
-    protected fun handleFailure(throwable: Throwable, retryAction: () -> Unit) {
+    protected fun getFailure(throwable: Throwable, retryAction: () -> Unit): Failure {
         chuckerCollector.get().onError(throwable::class.java.simpleName, throwable)
 
         val failure = throwable as? Failure ?: kotlin.run {
@@ -50,7 +40,7 @@ abstract class BaseViewModel : ViewModel() {
         }
         failure.retryAction = retryAction
 
-        _ldFailure.value = failure
+        return failure
     }
 
 }

@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import manuelperera.walkify.presentation.R
 import manuelperera.walkify.presentation.databinding.ActivityMainBinding
+import manuelperera.walkify.presentation.entity.base.StateResult
 import manuelperera.walkify.presentation.extensions.Constants.GPS_REQUEST_CODE
 import manuelperera.walkify.presentation.extensions.isGpsOn
 import manuelperera.walkify.presentation.extensions.isServiceRunning
@@ -92,15 +93,15 @@ class MainActivity : BaseActivity() {
 
     private fun setupViewModel() {
         mainViewModel = viewModel(viewModelFactory.get()) {
-            observe(ldLoading) {
-                photoAdapter.addLoadingPlaceholder(4)
-            }
-
-            observe(ldPhotoList, photoAdapter::addPhotos)
-
-            observe(ldFailure) { failure ->
-                val message = failure.getMessage(getResources())
-                photoAdapter.addError(message, failure.retryAction)
+            observe(ldPhotoListResult) { result ->
+                when (result) {
+                    is StateResult.HasValues -> photoAdapter.addPhotos(result.value)
+                    is StateResult.Loading -> photoAdapter.addLoadingPlaceholder(4)
+                    is StateResult.Error -> {
+                        val message = result.failure.getMessage(getResources())
+                        photoAdapter.addError(message, result.failure.retryAction)
+                    }
+                }
             }
         }
     }
