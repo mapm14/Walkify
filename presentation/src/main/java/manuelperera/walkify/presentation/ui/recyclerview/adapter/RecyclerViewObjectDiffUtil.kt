@@ -9,7 +9,7 @@ class RecyclerViewObjectDiffUtil(
 ) : DiffUtil.Callback() {
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-        oldList[oldItemPosition] === newList[newItemPosition]
+        oldList[oldItemPosition] == newList[newItemPosition]
 
     override fun getOldListSize() = oldList.size
 
