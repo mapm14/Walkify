@@ -1,8 +1,6 @@
 package manuelperera.walkify.presentation.ui.base.viewmodel
 
 import android.content.res.Resources
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.chuckerteam.chucker.api.ChuckerCollector
 import dagger.Lazy
